@@ -1,0 +1,31 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=libecwj2
+pkgver=3.3
+pkgrel=1
+pkgdesc="Supports reading and writing ECW files using the ERDAS ECW/JP2 SDK"
+arch="x86_64"
+url="http://www.gdal.org/frmt_ecw.html"
+license="ECW JPEG 2000 SDK FREE USE LICENSE AGREEMENT"
+makedepends="lcms-dev jpeg-dev tinyxml-dev"
+subpackages="$pkgname-dev"
+depends="lcms jpeg tinyxml"
+source="https://s3.amazonaws.com/b7s-devops/src/libecwj2-$pkgver.tar.gz"
+
+_ecwdir="$srcdir"/libecwj2-$pkgver
+
+build() {
+  cd "$_ecwdir"
+  ./configure --prefix=/usr --enable-static=no
+  make
+}
+
+package() {
+  cd "$_ecwdir"
+  mkdir -p "$pkgdir"/usr/include
+  cp "$_ecwdir"/Source/include/NCSTypes.h "$pkgdir"/usr/include
+  make DESTDIR="$pkgdir" install
+}
+
+sha512sums="51a406f4dd700116aff9ea1f8e3636b26f1d1a199c5698c9f73c281d9bb2619dfdcc104b9b7336d2e8a2880f46f2794c1dc9011610edaa6a793b29fae2de80a3 libecwj2-3.3.tar.gz"

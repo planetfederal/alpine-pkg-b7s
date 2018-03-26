@@ -1,0 +1,96 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=gdal
+pkgver=2.2.4
+pkgrel=1
+pkgdesc="GDAL is an open source X/MIT licensed translator library for raster and vector geospatial data formats."
+arch="x86_64"
+url="http://www.gdal.org"
+license="MIT"
+makedepends="
+    curl-dev
+    expat-dev
+    geos-dev
+    giflib-dev
+	jpeg-dev
+	libecwj2-dev
+	libkml-dev
+	libjpeg-turbo-dev
+	libpng-dev
+    linux-headers
+    openjpeg-dev
+    postgresql-dev
+    python2-dev
+    python3-dev
+	sqlite-dev
+	swig
+	tiff-dev
+	zlib-dev
+"
+
+subpackages="$pkgname-dev py2-$pkgname:py2"
+
+depends="
+    curl
+    expat
+    geos
+    giflib
+    jpeg
+    libecwj2
+    libjpeg-turbo
+    libkml
+    libpng
+    libpq
+    openjpeg
+    python2
+    sqlite
+    tiff
+    zlib
+"
+source="https://s3.amazonaws.com/b7s-devops/src/gdal-$pkgver.tar.gz"
+
+_gdaldir="$srcdir"/gdal-$pkgver
+build() {
+  cd "$_gdaldir"
+  ./configure --prefix=/usr \
+              --with-curl=/usr/bin/curl-config \
+              --with-geos=/usr/bin/geos-config \
+              --with-libkml \
+              --with-libkml-inc=/usr/include/kml \
+              --with-openjpeg \
+              --with-pg=/usr/bin/pg_config \
+              --enable-static=no
+  make
+  cd swig/python
+  python2 setup.py build
+}
+
+package() {
+  cd "$_gdaldir"
+  make DESTDIR="$pkgdir" install
+}
+
+py2() {
+	pkgdesc="$pkgname (python bindings)"
+
+	cd "$_gdaldir"/swig/python
+	python2 setup.py install --prefix=/usr --root="$subpkgdir"
+
+	chmod a+x scripts/*
+	install -d "$subpkgdir"/usr/bin
+	install -m755 scripts/*.py "$subpkgdir"/usr/bin/
+}
+
+check() {
+	cd "$_gdaldir"
+	apps/gdal-config --version | grep "$pkgver"
+
+	# confirms MBTiles support
+	apps/gdal_translate --formats | grep "MBTiles -raster- (rw+v)"
+
+	# confirms PostgreSQL/PostGIS support
+	apps/ogr2ogr --formats | grep "PostgreSQL -vector- (rw+): PostgreSQL/PostGIS"
+}
+
+sha512sums="82085c4e0aa112fa04c8e2631f6836bd18c396b8a83d1fe87cdd7ed801c9f1f82238e542d22493cfa75eca75e65a805277748229d4a25996c80a87131ffef7e1 gdal-2.2.4.tar.gz"

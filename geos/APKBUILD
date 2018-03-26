@@ -1,0 +1,28 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=geos
+pkgver=3.6.2
+pkgrel=1
+pkgdesc="Geometry Engine, Open Source"
+arch="x86_64"
+url="https://trac.osgeo.org/geos"
+license="LGPL-2.1-only"
+makedepends=""
+subpackages="$pkgname-dev"
+depends=""
+source="https://s3.amazonaws.com/b7s-devops/src/geos-$pkgver.tar.bz2"
+
+_geosdir="$srcdir"/geos-$pkgver
+build() {
+  cd "$_geosdir"
+  ./configure --prefix=/usr --enable-static=no
+  make
+}
+
+package() {
+  cd "$_geosdir"
+  make DESTDIR="$pkgdir" install
+}
+
+sha512sums="515d8700b8a28282678e481faee355e3a43d7b70160472a63335b8d7225d9ba10437be782378f18f31a15288118126d411a2d862f01ce35d27c96f6bc0a73016 geos-3.6.2.tar.bz2"

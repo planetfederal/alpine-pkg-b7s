@@ -1,0 +1,52 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=proj
+pkgver=5.0.0
+pkgrel=1
+pkgdesc="Cartographic Projections Library"
+arch="x86_64"
+url="http://proj4.org/"
+license="MIT"
+makedepends=""
+subpackages="$pkgname-doc $pkgname-dev"
+datumver=1.7
+depends=""
+source="
+    https://s3.amazonaws.com/b7s-devops/src/proj-$pkgver.tar.gz
+    https://s3.amazonaws.com/b7s-devops/src/proj-datumgrid-$datumver.tar.gz
+"
+
+_projdir="$srcdir"/proj-$pkgver
+build() {
+  cp $srcdir/alaska "$_projdir"/nad
+  cp $srcdir/BETA2007.gsb "$_projdir"/nad
+  cp $srcdir/conus "$_projdir"/nad
+  cp $srcdir/egm96_15.gtx "$_projdir"/nad
+  cp $srcdir/FL "$_projdir"/nad
+  cp $srcdir/hawaii "$_projdir"/nad
+  cp $srcdir/MD "$_projdir"/nad
+  cp $srcdir/ntf_r93.gsb "$_projdir"/nad
+  cp $srcdir/ntv1_can.dat "$_projdir"/nad
+  cp $srcdir/null "$_projdir"/nad
+  cp $srcdir/nzgd2kgrid0005.gsb "$_projdir"/nad
+  cp $srcdir/prvi "$_projdir"/nad
+  cp $srcdir/stgeorge "$_projdir"/nad
+  cp $srcdir/stlrnc "$_projdir"/nad
+  cp $srcdir/stpaul "$_projdir"/nad
+  cp $srcdir/TN "$_projdir"/nad
+  cp $srcdir/WI "$_projdir"/nad
+  cp $srcdir/WO "$_projdir"/nad
+  cd "$_projdir"
+  ./configure --prefix=/usr --enable-static=no
+  make
+}
+
+package() {
+  cd "$_projdir"
+  make DESTDIR="$pkgdir" install
+}
+
+sha512sums="dea763e40b5c104241770c15425c83fd4a9f273a14c2e84a6abc06ea0b4526bb92797dc079f1ae2053c3afad0052b6b1efa9cd784523e9051be0b8ab3ef33b24 proj-5.0.0.tar.gz
+8a17206527da12982cda2bfc1c9cfacce9ccb7c2f3b394c7c31bfbf3435a0301b896e6c340440e76aa5f409cf19a9ff0ee745cabfaf6fa20fcaa954b62b068f5 proj-datumgrid-1.7.tar.gz
+"

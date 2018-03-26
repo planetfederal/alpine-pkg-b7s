@@ -1,0 +1,30 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=openjpeg
+pkgver=2.3.0
+pkgrel=1
+pkgdesc="OpenJPEG is an open-source JPEG 2000 codec"
+arch="x86_64"
+url="https://github.com/google/libkml"
+license="BSD-3-Clause"
+makedepends="cmake"
+subpackages="$pkgname-dev"
+depends=""
+source="https://s3.amazonaws.com/b7s-devops/src/openjpeg-$pkgver.tar.gz"
+
+_ojdir="$srcdir"/openjpeg-$pkgver
+
+build() {
+  cd "$_ojdir"
+  cmake -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd "$_ojdir"
+  make DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE $pkgdir/usr/share/licenses/openjpeg/LICENSE
+}
+
+sha512sums="0a9d427be4a820b1d759fca4b50e293721b45fe4885aa61ca1ae09e099f75ed93520448090c780d62f51076d575cc03618cd6d5181bdb6b34e4fc07b4cfdd568 openjpeg-2.3.0.tar.gz"
