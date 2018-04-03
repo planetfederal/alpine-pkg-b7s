@@ -1,0 +1,48 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=py-pyproj
+_pkgname=pyproj
+pkgver=1.9.5.1
+pkgrel=1
+pkgdesc="python interface to PROJ4 library for cartographic transformations"
+url="https://github.com/jswhit/pyproj"
+arch="x86_64"
+license="OSI Approved"
+depends="proj"
+makedepends="python2-dev python3-dev py-setuptools proj-dev"
+subpackages="py2-${pkgname#py-}:_py2 py3-${pkgname#py-}:_py3"
+source="https://s3.amazonaws.com/b7s-devops/src/${_pkgname}-${pkgver}rel.tar.gz"
+builddir="$srcdir/${_pkgname}-${pkgver}rel"
+
+build() {
+	cd "$builddir"
+	export CFLAGS="$CFLAGS -L/lib"
+	python2 setup.py build
+	python3 setup.py build
+}
+
+package() {
+	mkdir -p "$pkgdir"
+}
+
+_py2() {
+	depends="${depends//py-/py2-}"
+	_py python2
+}
+
+_py3() {
+	depends="${depends//py-/py3-}"
+	_py python3
+}
+
+_py() {
+	local python="$1"
+	pkgdesc="$pkgdesc (for $python)"
+	install_if="$pkgname=$pkgver-$pkgrel $python"
+
+	cd "$builddir"
+	$python setup.py install --prefix=/usr --root="$subpkgdir" || return 1
+}
+
+sha512sums="2a719514415f5b48d2987f5364975ca7fc4104766d90bffb13c9be13ddba2184d50d021bd6863ee1708e678606cadb84a498402327c3f5573133b71fc85fbe27 pyproj-1.9.5.1rel.tar.gz"

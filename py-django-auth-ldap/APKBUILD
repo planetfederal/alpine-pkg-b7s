@@ -1,0 +1,48 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=py-django-auth-ldap
+_pkgname=django-auth-ldap
+pkgver=1.4.0
+pkgrel=1
+pkgdesc="Django LDAP authentication backend"
+url="https://pypi.python.org/pypi/django-auth-ldap/1.4.0"
+arch="noarch"
+license="OSI Approved"
+depends="proj"
+makedepends="python2-dev python3-dev py-setuptools"
+subpackages="py2-${pkgname#py-}:_py2 py3-${pkgname#py-}:_py3"
+source="https://s3.amazonaws.com/b7s-devops/src/${_pkgname}-${pkgver}.tar.gz"
+builddir="$srcdir/${_pkgname}-${pkgver}"
+
+build() {
+	cd "$builddir"
+	export CFLAGS="$CFLAGS -L/lib"
+	python2 setup.py build
+	python3 setup.py build
+}
+
+package() {
+	mkdir -p "$pkgdir"
+}
+
+_py2() {
+	depends="${depends//py-/py2-}"
+	_py python2
+}
+
+_py3() {
+	depends="${depends//py-/py3-}"
+	_py python3
+}
+
+_py() {
+	local python="$1"
+	pkgdesc="$pkgdesc (for $python)"
+	install_if="$pkgname=$pkgver-$pkg $python"
+
+	cd "$builddir"
+	$python setup.py install --prefix=/usr --root="$subpkgdir" || return 1
+}
+
+sha512sums="5661ea02b20a21a3b2e8df268c67c5cfe2948263a87798730302d606fb2fc6fcbfef83894348b6f66cf57139f862a6f41fd92fadf9a8a11565dad9858dfebe52 django-auth-ldap-1.4.0.tar.gz"

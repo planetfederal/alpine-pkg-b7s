@@ -18,6 +18,8 @@ makedepends="
 	libkml-dev
 	libjpeg-turbo-dev
 	libpng-dev
+	libxml2-dev
+    libxslt-dev
     linux-headers
     openjpeg-dev
     postgresql-dev
@@ -42,6 +44,8 @@ depends="
     libkml
     libpng
     libpq
+    libxml2
+    libxslt
     openjpeg
     python2
     sqlite

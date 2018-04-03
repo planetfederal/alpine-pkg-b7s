@@ -2,7 +2,7 @@
 # Contributor: Daniel Berry <dberry@boundlessgeo.com>
 
 pkgname=geos
-pkgver=3.6.2
+pkgver=3.6.0
 pkgrel=1
 pkgdesc="Geometry Engine, Open Source"
 arch="x86_64"
@@ -25,4 +25,4 @@ package() {
   make DESTDIR="$pkgdir" install
 }
 
-sha512sums="515d8700b8a28282678e481faee355e3a43d7b70160472a63335b8d7225d9ba10437be782378f18f31a15288118126d411a2d862f01ce35d27c96f6bc0a73016 geos-3.6.2.tar.bz2"
+sha512sums="6aa43e08cc7e3e00db6716905ea20e29ff1a4d26847e5809e4452c92ef52f371525918f0792007d90170d8af69b451acadd16127ad1bf73009987e5fa8a41d82 geos-3.6.0.tar.bz2"

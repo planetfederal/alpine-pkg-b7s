@@ -11,7 +11,7 @@ COPY abuilder /bin/
 COPY apk /tmp
 COPY apk/b7s.rsa.pub /etc/apk/keys/
 
-RUN apk --no-cache add /tmp/*.apk
+RUN if ls /tmp/*.apk; then apk --no-cache add /tmp/*.apk; fi
 
 USER builder
 

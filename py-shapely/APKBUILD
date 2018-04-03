@@ -1,0 +1,48 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=py-shapely
+_pkgname=Shapely
+pkgver=1.6.4
+pkgrel=1
+pkgdesc="Geometric objects, predicates, and operations"
+url="https://github.com/Toblerity/Shapely"
+arch="x86_64"
+license="BSD"
+depends="geos"
+makedepends="python2-dev python3-dev py-setuptools geos-dev"
+subpackages="py2-${pkgname#py-}:_py2 py3-${pkgname#py-}:_py3"
+source="https://s3.amazonaws.com/b7s-devops/src/${_pkgname}-${pkgver}.tar.gz"
+builddir="$srcdir/${_pkgname}-${pkgver}"
+
+build() {
+	cd "$builddir"
+	export CFLAGS="$CFLAGS -L/lib"
+	python2 setup.py build
+	python3 setup.py build
+}
+
+package() {
+	mkdir -p "$pkgdir"
+}
+
+_py2() {
+	depends="${depends//py-/py2-}"
+	_py python2
+}
+
+_py3() {
+	depends="${depends//py-/py3-}"
+	_py python3
+}
+
+_py() {
+	local python="$1"
+	pkgdesc="$pkgdesc (for $python)"
+	install_if="$pkgname=$pkgver-$pkgrel $python"
+
+	cd "$builddir"
+	$python setup.py install --prefix=/usr --root="$subpkgdir" || return 1
+}
+
+sha512sums="5e47aec6f7d3d6f1e30e8a43b81444092f179f588b55aac6b3ef11b0b84ee3099589ade65e31ad1a0287cb8a95c9775e6e3f9938dc3ee5c1bacc6009397d914a Shapely-1.6.4.tar.gz"

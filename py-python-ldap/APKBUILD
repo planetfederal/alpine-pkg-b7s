@@ -1,0 +1,48 @@
+# Maintainer: Daniel Berry <dberry@boundlessgeo.com>
+# Contributor: Daniel Berry <dberry@boundlessgeo.com>
+
+pkgname=py-python-ldap
+_pkgname=python-ldap
+pkgver=3.0.0
+pkgrel=1
+pkgdesc="LDAP client API for Python"
+url="https://github.com/python-ldap/python-ldap"
+arch="x86_64"
+license="OSI Approved"
+depends="proj"
+makedepends="python2-dev python3-dev py-setuptools openldap-dev"
+subpackages="py2-${pkgname#py-}:_py2 py3-${pkgname#py-}:_py3"
+source="https://s3.amazonaws.com/b7s-devops/src/${_pkgname}-${_pkgname}-${pkgver}.tar.gz"
+builddir="$srcdir/${_pkgname}-${_pkgname}-${pkgver}"
+
+build() {
+	cd "$builddir"
+	export CFLAGS="$CFLAGS -L/lib"
+	python2 setup.py build
+	python3 setup.py build
+}
+
+package() {
+	mkdir -p "$pkgdir"
+}
+
+_py2() {
+	depends="${depends//py-/py2-}"
+	_py python2
+}
+
+_py3() {
+	depends="${depends//py-/py3-}"
+	_py python3
+}
+
+_py() {
+	local python="$1"
+	pkgdesc="$pkgdesc (for $python)"
+	install_if="$pkgname=$pkgver-$pkg $python"
+
+	cd "$builddir"
+	$python setup.py install --prefix=/usr --root="$subpkgdir" || return 1
+}
+
+sha512sums="ce5943ae253da9f5fa2209f4cb50c8f755ae76d04109261a364ccec9134623e01ce21da6f74f6cecae1d8ca071dd5b23325a75df7bd1639fe523c451f849a362 python-ldap-python-ldap-3.0.0.tar.gz"
